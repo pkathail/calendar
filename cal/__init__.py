@@ -26,5 +26,6 @@ def page_not_found(e):
 
 @app.route('/')
 def home():
+	
     events = [sunday_events, monday_events, tuesday_events, wednesday_events, thursday_events, friday_events, saturday_events]
     return render_template('index.html', events=events)
