@@ -9,7 +9,7 @@ from cal.schema import db, Event, User
 from cal.fb import update_fb_events
 
 
-# Initialize the app
+#Intialize the app
 app = Flask(__name__)
 app.config.from_object('config')
 db.init_app(app)
@@ -74,7 +74,7 @@ def home():
 @app.route("/events/")
 def events():
     now = dt.datetime.now()
-    events = Event.query.filter(Event.start > now)\
+    events = Event.query.filter(Event.start > now) \
         .filter(Event.start < now + dt.timedelta(weeks=1))
 
     return jsonify(data=[event.to_json() for event in events.all()])
@@ -83,7 +83,18 @@ def events():
 @app.route("/users/")
 def users():
     now = dt.datetime.now()
-    events = Event.query.filter(Event.start > now)\
-        .filter(Event.start < now + dt.timedelta(weeks=1))
+    events = Event.query.filter(Event.start > now) \
+                         .filter(Event.start < now + dt.timedelta(weeks=1))
+
     users = {event.user for event in events}    # use set to make users unique
     return jsonify(data=[user.to_json() for user in users])
+
+
+@app.route("/search/<searchfield>")
+def search(searchfield):
+    now = dt.datetime.now()
+    search_results = Event.query.whoosh_search(searchfield) \
+                                 .filter(Event.start > now) \
+                                 .filter(Event.start < now + dt.timedelta(weeks=1))
+
+    return jsonify(data=[event.to_json() for event in search_results])
