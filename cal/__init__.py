@@ -1,12 +1,13 @@
 from flask import Flask, jsonify, render_template
 from schema import db, Event,User
 from cal.fb import update_fb_events
+import flask.ext.whooshalchemy as whooshalchemy
 
 app = Flask(__name__)
 app.config.from_object('config')
 
 db.init_app(app)
-
+whooshalchemy.whoosh_index(app, Event)
 
 @app.before_request
 def before_request():
@@ -28,7 +29,7 @@ def page_not_found(e):
 @app.route('/')
 def home():
 	events = Event.query.order_by(Event.start).all()
-	textsearch = Event.query.whoosh_search('Miss')
+	textsearch = Event.query.whoosh_search('a')
 	sunday_events = [event for event in events if event.start.weekday() == 0]
 	monday_events = [event for event in events if event.start.weekday() == 1]
 	tuesday_events = [event for event in events if event.start.weekday() == 2]
