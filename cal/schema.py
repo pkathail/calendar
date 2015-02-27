@@ -1,10 +1,11 @@
 from flask.ext.sqlalchemy import SQLAlchemy
+import flask.ext.whooshalchemy as whooshalchemy
 
 db = SQLAlchemy()
 
-
 class Event(db.Model):
     __tablename__ = "event"
+    __searchable__ = ['start', 'end', 'location','name']
 
     id = db.Column(db.Integer, primary_key=True)
 
@@ -24,3 +25,5 @@ class User(db.Model):
     name = db.Column(db.String, unique=True, nullable=False)
 
     events = db.relationship("Event", backref="user")
+
+whooshalchemy.whoosh_index(app, Event)

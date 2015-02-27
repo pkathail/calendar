@@ -19,6 +19,7 @@ try:
 
     BASEDIR = path.abspath(path.join(path.dirname(__file__), pardir))
     SQLALCHEMY_DATABASE_URI = "sqlite:///" + path.join(BASEDIR, "events.db")
+    WHOOSH_BASE = os.path.join(BASEDIR,'whoosh.db')
 
 except KeyError as e:
     """ Throw an error if a setting is missing """
