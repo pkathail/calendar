@@ -1,5 +1,7 @@
 from flask.ext.sqlalchemy import SQLAlchemy
 import flask.ext.whooshalchemy as whooshalchemy
+import json
+from pytz import timezone
 
 db = SQLAlchemy()
 
@@ -17,6 +19,20 @@ class Event(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
+    def to_JSON(self):
+        eastern = timezone('EST')
+        end_time = self.end
+        if end_time:
+            end_time = end_time.replace(tzinfo=eastern).isoformat()
+        return {
+            "id": self.id,
+            "start": self.start.replace(tzinfo=eastern).isoformat(),
+            "end": end_time,
+            "location": self.location,
+            "url": self.url,
+            "name": self.name,
+            "user_id": self.user_id
+        }
 
 class User(db.Model):
     __tablename__ = "user"
