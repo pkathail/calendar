@@ -29,7 +29,8 @@ def page_not_found(e):
 @app.route('/')
 def home():
 	events = Event.query.order_by(Event.start).all()
-	textsearch = Event.query.whoosh_search('a')
+	textsearch = Event.query.whoosh_search('Lerner').all()
+	print textsearch
 	sunday_events = [event for event in events if event.start.weekday() == 0]
 	monday_events = [event for event in events if event.start.weekday() == 1]
 	tuesday_events = [event for event in events if event.start.weekday() == 2]
@@ -39,7 +40,7 @@ def home():
 	saturday_events = [event for event in events if event.start.weekday() == 6]
 
 	events = [sunday_events, monday_events, tuesday_events, wednesday_events, thursday_events, friday_events, saturday_events]
-	return render_template('index.html', events=textsearch)
+	return render_template('index.html', events=events, searchresults=textsearch)
 
 
 @app.route('/update')
