@@ -7,6 +7,7 @@ import flask.ext.whooshalchemy as whooshalchemy
 
 from cal.schema import db, Event, User  # noqa
 from cal.fb import update_fb_events
+from cal.isc import to_icalendar
 
 
 # Initialize the app
@@ -99,3 +100,8 @@ def search(searchfield):
                                 .filter(Event.start < week_later)
 
     return jsonify(data=[event.to_json() for event in search_results])
+
+
+@app.route("/isc/", methods=["POST"])
+def to_isc():
+    event_ids = request.data["event_ids"]
