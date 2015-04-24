@@ -91,7 +91,8 @@ def users(year, month, day):
     events = Event.query.filter(Event.start > begin_week) \
                         .filter(Event.start < begin_week + one_week)
     users = {event.user for event in events}    # use set to make users unique
-    return jsonify(data=[user.to_json() for user in users])
+    users = [user.to_json() for user in sorted(users, key=lambda u: u.name)]
+    return jsonify(data=users)
 
 
 @app.route("/search/<searchfield>")
