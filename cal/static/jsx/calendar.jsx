@@ -7,7 +7,7 @@ function formatTime(d) {
     timeString += hour % 12 || 12;
 
     // Humanize minutes.
-    if (d.getMinutes() != 0) {
+    if (d.getMinutes() !== 0) {
         timeString += ":" + d.getMinutes();
     }
 
@@ -33,8 +33,8 @@ var REvent = React.createClass({
             // Only add start time's AM/PM if start and end dates are
             // different, or start and end are in different halves of
             // the day.
-            if (start.toDateString() == end.toDateString()
-                || AMPM(start) != AMPM(end)) {
+            equal_dates = start.toDateString() == end.toDateString();
+            if (equal_dates || AMPM(start) != AMPM(end)) {
                 timeString += AMPM(start);
             }
             timeString += " \u2013 " + formatTime(end) + AMPM(end);
@@ -50,12 +50,12 @@ var REvent = React.createClass({
             </div>
         );
     }
-})
+});
 
 var RDay = React.createClass({
     render: function() {
         var events = this.props.eventList.map(function(evt, i) {
-            return <REvent data={ evt }/>
+            return <REvent key={ evt.id } data={ evt }/>;
         });
 
         return (
@@ -64,7 +64,7 @@ var RDay = React.createClass({
             </td>
         );
     }
-})
+});
 
 var RWeek = React.createClass({
     render: function() {
@@ -76,10 +76,8 @@ var RWeek = React.createClass({
         }
 
         var days = [];
-        for (var i = 0; i < 7; i++) {
-            days.push(
-                <RDay eventList={ events[i] }/>
-            )
+        for (i = 0; i < 7; i++) {
+            days.push( <RDay key={ i } eventList={ events[i] }/> );
         }
 
         return (
@@ -88,28 +86,35 @@ var RWeek = React.createClass({
             </tr>
         );
     }
-})
+});
 
 var RCalendar = React.createClass({
     render: function() {
         return (
             <table className="calendar">
                 <thead>
-                    <td> Sunday </td>
-                    <td> Monday </td>
-                    <td> Tuesday </td>
-                    <td> Wednesday </td>
-                    <td> Thursday </td>
-                    <td> Friday </td>
-                    <td> Saturday </td>
+                    <td> Sunday {this.getDate(0)} </td>
+                    <td> Monday {this.getDate(1)} </td>
+                    <td> Tuesday {this.getDate(2)} </td>
+                    <td> Wednesday {this.getDate(3)} </td>
+                    <td> Thursday {this.getDate(4)} </td>
+                    <td> Friday {this.getDate(5)} </td>
+                    <td> Saturday {this.getDate(6)} </td>
                     <RNextWeek incrementDate={this.props.incrementDate}/>
                 </thead>
 
                 <RWeek eventList={ this.props.eventList } />
             </table>
         );
+    },
+    getDate: function(day_of_week) {
+        date = this.props.date;
+        date.setDate(date.getDate() - date.getDay() + day_of_week);
+        return (
+            date.getMonth().toString() + "/" + date.getDate().toString()
+        );
     }
-})
+});
 
 var RNextWeek = React.createClass({
     next: function() {
@@ -123,4 +128,4 @@ var RNextWeek = React.createClass({
             <td> <button onClick={this.previous}> Previous Week </button> <button onClick={this.next}> Next Week </button> </td>
         );
     }
-})
+});

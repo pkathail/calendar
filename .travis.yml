@@ -1,24 +1,20 @@
 language: python
 
 python:
-  - "2.7.9"
+  - "3.4"
 
-cache:
-  directories:
-    - $HOME/virtualenv/python2.7.9/
-    - $HOME/.pip_cache/
-
-before_install:
-  - export PIP_DOWNLOAD_CACHE=$HOME/.pip_cache/
+cache: pip
 
 install:
   - pip install -r config/requirements.txt
   - pip install flake8
+  - npm install -g jsxhint
 
 before_script:
   - source config/settings.test 
   - export PYTHONPATH=.
 
 script:
-  - flake8 .
-  - py.test
+  - flake8 --exclude=src .
+  - py.test -v tests/
+  - jsxhint cal/static/jsx/*
