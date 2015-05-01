@@ -89,8 +89,8 @@ def events(year, month, day):
 
     events = events.filter((start <= Event.start) | (Event.end >= start)) \
                    .filter((Event.start < end) | (Event.end < end))
-
-    return jsonify(data=[event.to_json() for event in events.all()])
+    events = [event.to_json() for event in sorted(events, key=lambda u: (u.start, u.end or dt.datetime(1900, 1, 1), u.name))]
+    return jsonify(data=events)
 
 
 @app.route("/users/<int:year>/<int:month>/<int:day>")
